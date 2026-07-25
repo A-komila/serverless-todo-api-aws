@@ -1,3 +1,4 @@
+[README.md](https://github.com/user-attachments/files/30378278/README.md)
 # Serverless REST API with Cognito Auth, DynamoDB & API Gateway
 
 AWS Solutions Architect – Associate graduation project.
@@ -148,4 +149,6 @@ Each function uses `boto3` to talk to DynamoDB and returns a JSON response with 
 
 ## Author
 
-Ayman Aly Mahmoud's AWS SAA-C03 graduation project list — Project 3: Serverless REST API with Cognito Auth, DynamoDB & WAF.
+Built by **Ameen Komila** as a graduation project for the AWS Solutions Architect – Associate (SAA-C03) course.
+
+Project idea based on "Project 3: Serverless REST API with Cognito Auth, DynamoDB & WAF" from the AWS SAA-C03 graduation project list by Ayman Aly Mahmoud.
