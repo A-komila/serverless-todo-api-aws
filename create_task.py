@@ -1,44 +1,153 @@
 import json
 import boto3
 import uuid
+import logging
 
-# Connect to the DynamoDB table
-dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('TodoTable')
+
+# Enable logging
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+
+# Connect to DynamoDB
+dynamodb = boto3.resource("dynamodb")
+table = dynamodb.Table("TodoTable")
+
+
+def get_user_id(event):
+    """
+    Extract authenticated user ID from Cognito
+    """
+
+    claims = event["requestContext"]["authorizer"]["claims"]
+
+    return claims["sub"]
+
+
 
 def lambda_handler(event, context):
+
     try:
-        # Parse the incoming request body
-        body = json.loads(event['body'])
 
-        user_id = body['userId']
-        title = body['title']
+        # Get authenticated user from Cognito
+        user_id = get_user_id(event)
 
-        # Generate a unique task ID
+
+        # Parse request body
+        body = json.loads(event["body"])
+
+
+        # Get task title
+        title = body.get("title")
+
+
+        # Validate input
+        if not title:
+
+            return {
+
+                "statusCode": 400,
+
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+
+                "body": json.dumps({
+
+                    "error": "Title is required"
+
+                })
+
+            }
+
+
+
+        # Generate task ID
         task_id = str(uuid.uuid4())
 
-        # Save the new task to DynamoDB
+
+
+        # Save task
         table.put_item(
+
             Item={
-                'userId': user_id,
-                'taskId': task_id,
-                'title': title,
-                'status': 'pending'
+
+                "userId": user_id,
+
+                "taskId": task_id,
+
+                "title": title,
+
+                "status": "pending"
+
             }
+
         )
 
+
+
+        logger.info(
+
+            "Task created successfully for user %s",
+
+            user_id
+
+        )
+
+
+
         return {
-            'statusCode': 200,
-            'headers': {'Content-Type': 'application/json'},
-            'body': json.dumps({
-                'message': 'Task created successfully',
-                'taskId': task_id
+
+
+            "statusCode": 201,
+
+
+            "headers": {
+
+                "Content-Type": "application/json"
+
+            },
+
+
+            "body": json.dumps({
+
+                "message": "Task created successfully",
+
+                "taskId": task_id
+
             })
+
         }
 
+
+
     except Exception as e:
+
+
+        logger.exception(
+
+            "Error creating task"
+
+        )
+
+
         return {
-            'statusCode': 500,
-            'headers': {'Content-Type': 'application/json'},
-            'body': json.dumps({'error': str(e)})
+
+
+            "statusCode": 500,
+
+
+            "headers": {
+
+                "Content-Type": "application/json"
+
+            },
+
+
+            "body": json.dumps({
+
+                "error": str(e)
+
+            })
+
         }
