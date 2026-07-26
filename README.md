@@ -23,6 +23,14 @@ The request is then routed to AWS Lambda functions that perform CRUD operations 
 
 ---
 
+## AWS Region
+
+```
+us-east-1
+```
+
+---
+
 ## AWS Services Used
 
 ### Amazon Cognito
@@ -37,6 +45,7 @@ The request is then routed to AWS Lambda functions that perform CRUD operations 
 - Request routing
 
 ### AWS Lambda
+
 Four Lambda functions handle Todo operations:
 
 | Function | Method | Endpoint | Description |
@@ -78,7 +87,21 @@ Each user can only access their own tasks.
 
 ## API Endpoints
 
-### Create Task
+Base URL:
+
+```
+https://fjaqaujb49.execute-api.us-east-1.amazonaws.com/prod
+```
+
+All endpoints require:
+
+```
+Authorization: Bearer <JWT_TOKEN>
+```
+
+---
+
+## Create Task
 
 ```
 POST /tasks
@@ -92,35 +115,17 @@ Request body:
 }
 ```
 
-Response:
-
-```json
-{
-    "message": "Task created successfully",
-    "taskId": "task-id"
-}
-```
-
 ---
 
-### Get Tasks
+## Get Tasks
 
 ```
 GET /tasks
 ```
 
-Response:
-
-```json
-{
-    "tasks": [],
-    "count": 0
-}
-```
-
 ---
 
-### Update Task
+## Update Task
 
 ```
 PUT /tasks
@@ -137,7 +142,7 @@ Request body:
 
 ---
 
-### Delete Task
+## Delete Task
 
 ```
 DELETE /tasks
@@ -153,15 +158,34 @@ Request body:
 
 ---
 
+## Lambda Functions
+
+The project contains four Lambda functions:
+
+```
+create_task.py
+get_tasks.py
+update_task.py
+delete_task.py
+```
+
+Each function:
+
+- Extracts the user identity from Cognito JWT claims.
+- Does not trust userId values sent by clients.
+- Accesses only the authenticated user's tasks.
+
+---
+
 ## Security
 
 The project follows AWS security best practices:
 
-- Cognito authentication required for all API methods
-- JWT token validation through API Gateway
-- User isolation using `userId`
-- IAM least privilege permissions
-- No public database access
+- Cognito authentication required for all API methods.
+- JWT token validation through API Gateway.
+- User isolation using Cognito `sub`.
+- IAM least privilege permissions.
+- No public database access.
 
 ---
 
@@ -177,42 +201,32 @@ The project follows AWS security best practices:
 
 ---
 
-## Testing
+## Testing Results
 
-The API was tested using AWS CloudShell.
+The API was tested successfully using AWS CloudShell.
 
 Tested operations:
 
-✅ User authentication  
-✅ Create task  
-✅ Retrieve tasks  
-✅ Update task  
-✅ Delete task  
+| Operation | Result |
+|---|---|
+| User Authentication | ✅ Passed |
+| Create Task | ✅ Passed |
+| Get Tasks | ✅ Passed |
+| Update Task | ✅ Passed |
+| Delete Task | ✅ Passed |
 
 ---
 
 ## Project Structure
 
 ```
-Serverless-Todo-API/
+serverless-todo-api-aws/
 
-│
-├── Lambda Functions/
-│
-├── CreateTask/
-│   └── lambda_function.py
-│
-├── GetTasks/
-│   └── lambda_function.py
-│
-├── UpdateTask/
-│   └── lambda_function.py
-│
-├── DeleteTask/
-│   └── lambda_function.py
-│
+├── create_task.py
+├── get_tasks.py
+├── update_task.py
+├── delete_task.py
 ├── aws-todo-architecture.png
-│
 └── README.md
 ```
 
@@ -220,6 +234,6 @@ Serverless-Todo-API/
 
 ## Author
 
-Serverless Todo API Project
+A-komila
 
 Built with AWS Serverless Architecture.
